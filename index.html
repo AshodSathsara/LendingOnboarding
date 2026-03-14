@@ -4,19 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lending Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-blue: #2563eb;
+            --primary-blue-soft: #dbeafe;
+            --primary-blue-muted: #93c5fd;
             --success-green: #38ff60;
             --light-blue: #eff6ff;
             --text-main: #1f2937;
             --text-muted: #6b7280;
-            --bg-color: #f8fafc;
+            --bg-color: #f1f5f9;
             --card-bg: #ffffff;
+            --border-color: #e2e8f0;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
@@ -24,90 +28,111 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            line-height: 1.6;
         }
 
         .lang-control { width: 100%; max-width: 500px; display: flex; justify-content: flex-end; margin-bottom: 15px; }
-        #langToggle { background: var(--primary-blue); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+        #langToggle {
+            background: rgba(255,255,255,0.6);
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue-soft);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        #langToggle:hover { opacity: 0.85; }
 
-        .container { max-width: 500px; width: 100%; display: flex; flex-direction: column; gap: 30px; }
+        .container { max-width: 500px; width: 100%; display: flex; flex-direction: column; gap: 24px; }
 
         .card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border-top: 5px solid var(--primary-blue);
+            background: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-top: 4px solid var(--primary-blue-soft);
+            transition: all 0.3s ease;
         }
 
-        h2 { margin-top: 0; font-size: 1.25rem; font-weight: 600; margin-bottom: 15px; }
+        h2 { margin-top: 0; font-size: 1.15rem; font-weight: 600; margin-bottom: 18px; letter-spacing: -0.02em; color: var(--text-main); }
 
         .hero {
             text-align: center;
             border-top: none;
-            background: linear-gradient(to bottom right, var(--primary-blue), #1d4ed8);
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
             color: white;
             padding: 45px 20px 55px;
             position: relative;
         }
         .hero h2 {
-            color: var(--light-blue);
-            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.7rem;
             font-weight: 500;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
             margin-bottom: 16px;
         }
         .hero .divider {
-            width: 40px;
+            width: 36px;
             height: 1px;
-            background: rgba(255,255,255,0.3);
-            margin: 0 auto 20px;
+            background: rgba(255,255,255,0.25);
+            margin: 0 auto 22px;
         }
         .hero .amount {
             font-size: 3.5rem;
             font-weight: 700;
             margin: 0;
             line-height: 1;
+            letter-spacing: -0.03em;
         }
         .hero .amount .currency {
-            font-size: 1.5rem;
-            font-weight: 400;
-            opacity: 0.75;
+            font-size: 1.4rem;
+            font-weight: 300;
+            opacity: 0.7;
             vertical-align: super;
             margin-right: 4px;
+            letter-spacing: 0;
         }
         .last-updated {
             position: absolute;
             bottom: 14px;
             right: 16px;
-            font-size: 0.7rem;
-            background: rgba(255,255,255,0.15);
-            color: var(--light-blue);
-            padding: 3px 10px;
+            font-size: 0.68rem;
+            background: rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.8);
+            padding: 4px 12px;
             border-radius: 20px;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.15);
+            letter-spacing: 0.02em;
         }
 
         #defaultSection {
-            padding: 15px;
-            background: #f0fdf4;
+            padding: 16px;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
             border-radius: 12px;
             border: 1px dashed var(--success-green);
             margin-bottom: 20px;
         }
 
-        .interest-hint { font-size: 0.9rem; color: var(--text-main); font-weight: 600; }
-        #hintVal { color: #1db845; font-size: 1.1rem; }
+        .interest-hint { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; }
+        #hintVal { color: #1db845; font-size: 1.15rem; font-weight: 700; }
 
         #emiSection {
             display: none;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid var(--border-color);
             padding-top: 20px;
             margin-bottom: 25px;
             animation: fadeIn 0.4s ease-in-out;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
         .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
 
@@ -119,41 +144,77 @@
         }
         .doughnut::after { content: ""; position: absolute; width: 95px; height: 95px; background: var(--card-bg); border-radius: 50%; }
 
-        .legend { display: flex; gap: 20px; margin-top: 15px; font-size: 0.85rem; }
-        .legend-item { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .legend { display: flex; gap: 20px; margin-top: 15px; font-size: 0.82rem; color: var(--text-muted); }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; }
 
         .result-box {
-            margin-top: 20px; padding: 15px;
-            background-color: #f0fdf4; border-radius: 12px;
+            margin-top: 20px; padding: 18px;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-radius: 14px;
             border: 1px dashed #38ff60; text-align: center;
         }
 
-        #emiResult { font-size: 1.4rem; font-weight: 700; color: #1db845; display: block; }
-        #totalInterestResult { font-size: 1rem; font-weight: 600; color: var(--primary-blue); }
+        #emiResult { font-size: 1.5rem; font-weight: 700; color: #1db845; display: block; letter-spacing: -0.02em; }
+        #totalInterestResult { font-size: 0.95rem; font-weight: 600; color: var(--primary-blue); }
 
-        .rate-item { display: flex; justify-content: space-between; padding: 14px 12px; border-bottom: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.3s ease; }
-        .rate-item.inactive-rate { opacity: 0.45; font-size: 0.85rem; padding: 10px 12px; }
-        .rate-item.active-rate { background-color: #eff6ff; }
-        .rate-item .rate { font-weight: 600; color: var(--primary-blue); }
+        .rate-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 12px; border-bottom: 1px solid var(--border-color); border-radius: 8px; transition: all 0.3s ease; font-size: 0.9rem; }
+        .rate-item.inactive-rate { opacity: 0.4; font-size: 0.85rem; padding: 10px 12px; }
+        .rate-item.active-rate { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+        .rate-item .rate { font-weight: 700; color: var(--primary-blue); font-size: 0.95rem; }
 
-        .faq-item { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .faq-item { margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
         .faq-item:last-child { border: none; }
-        .faq-item h3 { font-size: 0.95rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .faq-item h3::after { content: '+'; font-size: 1.2rem; transition: transform 0.3s; color: var(--primary-blue); }
+        .faq-item h3 { font-size: 0.9rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; line-height: 1.5; transition: all 0.3s ease; }
+        .faq-item h3::after { content: '+'; font-size: 1.1rem; transition: transform 0.3s; color: var(--primary-blue-muted); }
         .faq-item.active h3::after { content: '−'; transform: rotate(180deg); }
         .faq-answer { display: none; margin-top: 12px; }
         .faq-item.active .faq-answer { display: block; animation: fadeIn 0.3s ease-in-out; }
-        .faq-item p { font-size: 0.85rem; line-height: 1.5; color: var(--text-muted); margin: 0; }
-        .faq-item ul { font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; margin-top: 8px; }
+        .faq-item p { font-size: 0.85rem; line-height: 1.7; color: var(--text-muted); margin: 0; }
+        .faq-item ul { font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; margin-top: 8px; line-height: 1.8; }
 
-        .footer { margin-top: 20px; padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.75rem; }
+        .footer { margin-top: 10px; padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.72rem; letter-spacing: 0.02em; }
 
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 8px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; box-sizing: border-box; background: white; }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; font-size: 0.82rem; font-weight: 500; margin-bottom: 8px; color: var(--text-muted); letter-spacing: 0.01em; }
+        input, select {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            background: white;
+            color: var(--text-main);
+            font-family: inherit;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+        }
+        input::placeholder { color: #c0c8d4; }
 
-        button.submit-btn { width: 100%; background-color: var(--primary-blue); color: white; border: none; padding: 16px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        button.submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            font-family: inherit;
+            letter-spacing: 0.01em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        button.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4); }
+        button.submit-btn:active { transform: translateY(0); }
+        button.submit-btn:disabled { background: linear-gradient(135deg, #94a3b8, #cbd5e1); box-shadow: none; cursor: not-allowed; transform: none; }
     </style>
 </head>
 <body>
@@ -325,7 +386,7 @@
                 lastUpdatedLbl: "Last Updated:",
                 today: "Today",
                 yesterday: "Yesterday",
-                amountWarning: "This value cannot exceed the available amount."
+                amountWarning: "Amount cannot exceed the available lending amount."
             },
             si: {
                 toggle: "Switch to English",
@@ -364,7 +425,7 @@
                 lastUpdatedLbl: "අවසන් යාවත්කාලීන කිරීම:",
                 today: "අද",
                 yesterday: "ඊයේ",
-                amountWarning: "මෙම අගය ලබා දිය හැකි මුදලට වඩා වැඩි විය නොහැකිය."
+                amountWarning: "ඉල්ලුම් කළ මුදල ලබා දිය හැකි උපරිම මුදලට වඩා වැඩි විය නොහැකිය."
             }
         };
 
@@ -498,15 +559,28 @@
 
             const entered = parseInt(raw) || 0;
             const warning = document.getElementById('amountWarning');
+            const submitBtn = document.querySelector('.submit-btn');
             if (entered > availableAmountRaw) {
                 warning.innerText = translations[currentLang].amountWarning;
                 warning.style.display = 'block';
                 this.style.borderColor = '#ef4444';
+                submitBtn.disabled = true;
             } else {
                 warning.style.display = 'none';
                 this.style.borderColor = '';
+                submitBtn.disabled = false;
             }
             updateUI();
+        });
+
+        // Focus input when disabled button is clicked
+        document.querySelector('.submit-btn').parentElement.addEventListener('click', function(e) {
+            const btn = document.querySelector('.submit-btn');
+            if (btn.disabled) {
+                e.preventDefault();
+                amountInp.focus();
+                amountInp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         });
         yearInp.addEventListener('input', updateUI);
         monthInp.addEventListener('input', updateUI);
@@ -532,7 +606,7 @@
             } else {
                 message += `*Monthly Interest:* Rs. ${document.getElementById('hintVal').innerText}\n`;
             }
-            message += `*Expected Date:* ${date}`;
+            message += `*Expected Date of Disbursement:* ${date}`;
 
             window.open(`https://wa.me/94714296288?text=${encodeURIComponent(message)}`, '_blank');
         });
