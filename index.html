@@ -521,7 +521,7 @@
             const years = yearInp.value;
             const months = monthInp.value;
 
-            let message = `*New LendingRequest*\n\n`;
+            let message = `*New Lending Request*\n\n`;
             message += `*Name:* ${name}\n`;
             message += `*Amount:* Rs. ${parseFloat(amount.replace(/,/g, '')).toLocaleString('en-LK')}\n`;
             message += `*Repayment Method:* ${method === 'emi' ? 'EMI' : 'Default (Monthly Interest Only)'}\n`;
