@@ -239,7 +239,7 @@
             <form id="requestForm">
                 <div class="form-group">
                     <label data-key="labelName">Full Name</label>
-                    <input type="text" id="name" required placeholder="Enter name">
+                    <input type="text" id="name" required placeholder="Enter name" autocapitalize="words" oninput="this.value = this.value.replace(/\b\w/g, c => c.toUpperCase())">
                 </div>
                 <div class="form-group">
                     <label data-key="labelAmount">Requested Amount (Rs.)</label>
