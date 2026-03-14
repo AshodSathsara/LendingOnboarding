@@ -46,10 +46,20 @@
             border-top: none;
             background: linear-gradient(to bottom right, var(--primary-blue), #1d4ed8);
             color: white;
-            padding: 40px 20px;
+            padding: 30px 20px 28px;
+            position: relative;
         }
         .hero h2 { color: var(--light-blue); font-size: 1rem; font-weight: 400; }
         .hero .amount { font-size: 2.5rem; font-weight: 700; margin: 0; }
+        
+        .last-updated {
+            position: absolute;
+            bottom: 10px;
+            right: 16px;
+            font-size: 0.75rem;
+            color: var(--light-blue);
+            opacity: 0.9;
+        }
 
         .method-selector {
             background: var(--bg-color);
@@ -73,6 +83,7 @@
             display: none;
             border-top: 1px solid #e5e7eb;
             padding-top: 20px;
+            margin-bottom: 25px;
             animation: fadeIn 0.4s ease-in-out;
         }
 
@@ -101,12 +112,18 @@
         #emiResult { font-size: 1.4rem; font-weight: 700; color: #16a34a; display: block; }
         #totalInterestResult { font-size: 1rem; font-weight: 600; color: var(--primary-blue); }
 
-        .rate-item { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #e5e7eb; }
+        .rate-item { display: flex; justify-content: space-between; padding: 14px 12px; border-bottom: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.3s ease; }
+        .rate-item.inactive-rate { opacity: 0.45; font-size: 0.85rem; padding: 10px 12px; }
+        .rate-item.active-rate { background-color: #eff6ff; }
         .rate-item .rate { font-weight: 600; color: var(--primary-blue); }
 
         .faq-item { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
         .faq-item:last-child { border: none; }
-        .faq-item h3 { font-size: 0.95rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 8px; }
+        .faq-item h3 { font-size: 0.95rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .faq-item h3::after { content: '+'; font-size: 1.2rem; transition: transform 0.3s; color: var(--primary-blue); }
+        .faq-item.active h3::after { content: '−'; transform: rotate(180deg); }
+        .faq-answer { display: none; margin-top: 12px; }
+        .faq-item.active .faq-answer { display: block; animation: fadeIn 0.3s ease-in-out; }
         .faq-item p { font-size: 0.85rem; line-height: 1.5; color: var(--text-muted); margin: 0; }
         .faq-item ul { font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; margin-top: 8px; }
 
@@ -128,7 +145,11 @@
     <div class="container">
         <div class="card hero">
             <h2 data-key="availTitle">Amount available to lend</h2>
-            <p class="amount">Rs. 150,000</p>
+            <p class="amount" id="availableAmount">Rs. —</p>
+            <div class="last-updated">
+                <span data-key="lastUpdatedLbl">Last Updated:</span> 
+                <span id="lastUpdatedDate"></span>
+            </div>
         </div>
 
         <div class="card">
@@ -140,7 +161,7 @@
                 </div>
                 <div class="form-group">
                     <label data-key="labelAmount">Requested Amount (Rs.)</label>
-                    <input type="number" id="requestAmount" required placeholder="e.g. 50000">
+                    <input type="text" id="requestAmount" required placeholder="e.g. 50,000" inputmode="numeric">
                 </div>
                 
                 <div class="form-group">
@@ -199,36 +220,39 @@
 
         <div class="card">
             <h2 data-key="ratesTitle">Current Lending Rates (Monthly)</h2>
-            <div class="rate-item"><span data-key="rate1">Less than Rs. 100,000</span> <span class="rate">7%</span></div>
-            <div class="rate-item"><span data-key="rate2">Less than Rs. 300,000</span> <span class="rate">6%</span></div>
-            <div class="rate-item"><span data-key="rate3">Less than Rs. 1,000,000</span> <span class="rate">5%</span></div>
-            <div class="rate-item"><span data-key="rate4">More than Rs. 1,000,000</span> <span class="rate">4%</span></div>
+            <div id="ratesContainer"></div>
         </div>
 
         <div class="card">
             <h2 data-key="faqTitle">Frequently Asked Questions</h2>
             <div class="faq-item">
                 <h3 data-key="faqCompQ">Which repayment method should I choose?</h3>
-                <p><strong data-key="faqCompDef">Default Method:</strong></p>
-                <ul data-key="faqCompDefList">
-                    <li>Best if you want low monthly costs.</li>
-                    <li>You only pay the interest every month.</li>
-                    <li>The full loan amount is paid back at once later.</li>
-                </ul>
-                <p><strong data-key="faqCompEmi">EMI Method:</strong></p>
-                <ul data-key="faqCompEmiList">
-                    <li>Best for clearing debt gradually.</li>
-                    <li>Monthly payment is higher but includes the loan itself.</li>
-                    <li>Loan is finished at the end of the period.</li>
-                </ul>
+                <div class="faq-answer">
+                    <p><strong data-key="faqCompDef">Default Method:</strong></p>
+                    <ul data-key="faqCompDefList">
+                        <li>Best if you want low monthly costs.</li>
+                        <li>You only pay the interest every month.</li>
+                        <li>The full loan amount is paid back at once later.</li>
+                    </ul>
+                    <p><strong data-key="faqCompEmi">EMI Method:</strong></p>
+                    <ul data-key="faqCompEmiList">
+                        <li>Best for clearing debt gradually.</li>
+                        <li>Monthly payment is higher but includes the loan itself.</li>
+                        <li>Loan is finished at the end of the period.</li>
+                    </ul>
+                </div>
             </div>
             <div class="faq-item">
                 <h3 data-key="faqEmiQ">What is an EMI?</h3>
-                <p data-key="faqEmiA">EMI stands for Equated Monthly Installment. It is a fixed amount you pay back every month until the loan is fully repaid. It includes both a portion of the loan amount and the interest.</p>
+                <div class="faq-answer">
+                    <p data-key="faqEmiA">EMI stands for Equated Monthly Installment. It is a fixed amount you pay back every month until the loan is fully repaid. It includes both a portion of the loan amount and the interest.</p>
+                </div>
             </div>
             <div class="faq-item">
                 <h3 data-key="faqRbQ">What is the Reducing Balance Method?</h3>
-                <p data-key="faqRbA">In this method, interest is calculated only on the remaining loan amount each month. As you pay back the loan, your interest cost decreases over time.</p>
+                <div class="faq-answer">
+                    <p data-key="faqRbA">In this method, interest is calculated only on the remaining loan amount each month. As you pay back the loan, your interest cost decreases over time.</p>
+                </div>
             </div>
         </div>
 
@@ -238,6 +262,15 @@
     </div>
 
     <script>
+    <script>
+        // ─── GitHub config ───────────────────────────────────────────────
+        const GITHUB_USER = 'ashodsathsara';
+        const GITHUB_REPO = 'LendingOnboarding';
+        const CONFIG_FILE = 'config.json';
+        const CONFIG_URL  = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${CONFIG_FILE}`;
+        const COMMITS_URL = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/commits?path=${CONFIG_FILE}&per_page=1`;
+
+        // ─── Translations ────────────────────────────────────────────────
         const translations = {
             en: {
                 toggle: "සිංහලට මාරු කරන්න",
@@ -258,10 +291,6 @@
                 labelTotalInt: "Total Interest Payable",
                 labelDate: "Expected Date of Disbursement",
                 ratesTitle: "Current Lending Rates (Monthly)",
-                rate1: "Less than Rs. 100,000",
-                rate2: "Less than Rs. 300,000",
-                rate3: "Less than Rs. 1,000,000",
-                rate4: "More than Rs. 1,000,000",
                 btnText: "Send Request via WhatsApp",
                 faqTitle: "Frequently Asked Questions",
                 faqCompQ: "Which repayment method should I choose?",
@@ -272,7 +301,10 @@
                 faqEmiQ: "What is an EMI?",
                 faqEmiA: "EMI stands for Equated Monthly Installment. It is a fixed amount you pay back every month until the loan is fully repaid.",
                 faqRbQ: "What is the Reducing Balance Method?",
-                faqRbA: "Interest is calculated only on the remaining loan amount each month, decreasing over time."
+                faqRbA: "Interest is calculated only on the remaining loan amount each month, decreasing over time.",
+                lastUpdatedLbl: "Last Updated:",
+                today: "Today",
+                yesterday: "Yesterday"
             },
             si: {
                 toggle: "Switch to English",
@@ -293,10 +325,6 @@
                 labelTotalInt: "මුළු පොලී මුදල",
                 labelDate: "මුදල් අවශ්‍ය දිනය",
                 ratesTitle: "වත්මන් පොලී අනුපාත (මාසික)",
-                rate1: "රු. 100,000 ට අඩු",
-                rate2: "රු. 300,000 ට අඩු",
-                rate3: "රු. 1,000,000 ට අඩු",
-                rate4: "රු. 1,000,000 ට වැඩි",
                 btnText: "WhatsApp මගින් යොමු කරන්න",
                 faqTitle: "පොදු ගැටළු",
                 faqCompQ: "මා තෝරාගත යුත්තේ කුමන ගෙවීමේ ක්‍රමයද?",
@@ -307,11 +335,18 @@
                 faqEmiQ: "EMI යනු කුමක්ද?",
                 faqEmiA: "EMI යනු ණය මුදල ගෙවා නිම කරන තෙක් සෑම මසකම ගෙවිය යුතු ස්ථාවර මුදලයි.",
                 faqRbQ: "අඩුවන ශේෂ ක්‍රමය යනු කුමක්ද?",
-                faqRbA: "පොලිය ගණනය කරනු ලබන්නේ ඉතිරිව පවතින ණය ශේෂයට පමණි."
+                faqRbA: "පොලිය ගණනය කරනු ලබන්නේ ඉතිරිව පවතින ණය ශේෂයට පමණි.",
+                lastUpdatedLbl: "අවසන් යාවත්කාලීන කිරීම:",
+                today: "අද",
+                yesterday: "ඊයේ"
             }
         };
 
+        // ─── App state ───────────────────────────────────────────────────
         let currentLang = 'en';
+        let CONFIG = null; // populated after fetch
+
+        // ─── Language toggle ─────────────────────────────────────────────
         document.getElementById('langToggle').addEventListener('click', function() {
             currentLang = currentLang === 'en' ? 'si' : 'en';
             this.innerText = translations[currentLang].toggle;
@@ -320,72 +355,45 @@
             });
         });
 
-        const methodSelector = document.getElementById('methodSelector');
-        const defaultSection = document.getElementById('defaultSection');
-        const emiSection = document.getElementById('emiSection');
+        // ─── Last Updated (from GitHub commits API) ──────────────────────
+        async function setLastUpdatedFromGitHub() {
+            const dateSpan = document.getElementById('lastUpdatedDate');
+            try {
+                const res = await fetch(COMMITS_URL);
+                const commits = await res.json();
+                const commitDate = new Date(commits[0].commit.committer.date);
 
-        methodSelector.addEventListener('change', function() {
-            if (this.value === 'emi') {
-                emiSection.style.display = 'block';
-                defaultSection.style.display = 'none';
-            } else {
-                emiSection.style.display = 'none';
-                defaultSection.style.display = 'block';
+                const now = new Date();
+                const today    = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const modDate  = new Date(commitDate.getFullYear(), commitDate.getMonth(), commitDate.getDate());
+                const diffDays = Math.round((today - modDate) / (1000 * 3600 * 24));
+
+                if (diffDays === 0) {
+                    dateSpan.setAttribute('data-key', 'today');
+                    dateSpan.innerHTML = translations[currentLang]['today'];
+                } else if (diffDays === 1) {
+                    dateSpan.setAttribute('data-key', 'yesterday');
+                    dateSpan.innerHTML = translations[currentLang]['yesterday'];
+                } else {
+                    const yyyy = commitDate.getFullYear();
+                    const mm   = String(commitDate.getMonth() + 1).padStart(2, '0');
+                    const dd   = String(commitDate.getDate()).padStart(2, '0');
+                    dateSpan.innerText = `${yyyy}/${mm}/${dd}`;
+                    dateSpan.removeAttribute('data-key');
+                }
+            } catch(e) {
+                dateSpan.innerText = '—';
             }
-            updateUI();
-        });
-
-        const amountInp = document.getElementById('requestAmount');
-        const yearInp = document.getElementById('durYears');
-        const monthInp = document.getElementById('durMonths');
-        const emiDisplay = document.getElementById('emiResult');
-        const totalIntDisplay = document.getElementById('totalInterestResult');
-        const hintVal = document.getElementById('hintVal');
-        const chart = document.getElementById('chart');
-
-        function updateUI() {
-            const P = parseFloat(amountInp.value) || 0;
-            let rate = P < 100000 ? 0.07 : P < 300000 ? 0.06 : P < 1000000 ? 0.05 : 0.04;
-            
-            // Update Default Hint
-            hintVal.innerText = (P * rate).toLocaleString(undefined, {minimumFractionDigits: 2});
-
-            // Update EMI
-            const N = (parseInt(yearInp.value) || 0) * 12 + (parseInt(monthInp.value) || 0);
-            if (P <= 0 || N <= 0) {
-                emiDisplay.innerText = "Rs. 0.00";
-                totalIntDisplay.innerText = "Rs. 0.00";
-                chart.style.background = `conic-gradient(#ccc 0deg 360deg)`;
-                return;
-            }
-
-            let R = rate / 12;
-            const emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
-            const totalRepayment = emi * N;
-            const totalInterest = totalRepayment - P;
-
-            emiDisplay.innerText = `Rs. ${emi.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            totalIntDisplay.innerText = `Rs. ${totalInterest.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-
-            const capitalPercent = (P / totalRepayment) * 360;
-            chart.style.background = `conic-gradient(var(--success-green) 0deg ${capitalPercent}deg, var(--primary-blue) ${capitalPercent}deg 360deg)`;
         }
 
-        [amountInp, yearInp, monthInp].forEach(el => el.addEventListener('input', updateUI));
-
-        document.getElementById('requestForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const method = methodSelector.value;
-            let msg = `*New Lending Request*\n\nName: ${document.getElementById('name').value}\nAmount: Rs. ${amountInp.value}\nDate: ${document.getElementById('date').value}\nMethod: ${method === 'emi' ? 'EMI (Monthly Installments)' : 'Default (Interest Only)'}`;
-            
-            if (method === 'emi') {
-                msg += `\nEMI: ${emiDisplay.innerText}\nTotal Interest: ${totalIntDisplay.innerText}\nDuration: ${yearInp.value}y ${monthInp.value}m`;
-            } else {
-                msg += `\nMonthly Interest: Rs. ${hintVal.innerText}`;
-            }
-            
-            window.open(`https://wa.me/94714296288?text=${encodeURIComponent(msg)}`, '_blank');
-        });
-    </script>
-</body>
-</html>
+        // ─── Build rates card from config ────────────────────────────────
+        function buildRatesCard(rates) {
+            const container = document.getElementById('ratesContainer');
+            container.innerHTML = '';
+            rates.forEach((r, i) => {
+                const div = document.createElement('div');
+                div.className = 'rate-item';
+                div.setAttribute('data-rate-index', i);
+                div.innerHTML = `<span>${r.label}</span><span class="rate">${Math.round(r.rate * 100)}%</span>`;
+                container.appendChild(div);
+         
