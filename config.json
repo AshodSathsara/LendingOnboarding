@@ -1,0 +1,9 @@
+{
+    "availableAmount": 150000,
+    "rates": [
+        { "label": "Less than Rs. 100,000",   "threshold": 100000,  "rate": 0.07 },
+        { "label": "Less than Rs. 300,000",   "threshold": 300000,  "rate": 0.06 },
+        { "label": "Less than Rs. 1,000,000", "threshold": 1000000, "rate": 0.05 },
+        { "label": "More than Rs. 1,000,000", "threshold": 999999999, "rate": 0.04 }
+    ]
+}
