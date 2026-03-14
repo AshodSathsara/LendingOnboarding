@@ -7,7 +7,7 @@
     <style>
         :root {
             --primary-blue: #2563eb;
-            --success-green: #16a34a;
+            --success-green: #38ff60;
             --light-blue: #eff6ff;
             --text-main: #1f2937;
             --text-muted: #6b7280;
@@ -46,26 +46,46 @@
             border-top: none;
             background: linear-gradient(to bottom right, var(--primary-blue), #1d4ed8);
             color: white;
-            padding: 30px 20px 28px;
+            padding: 45px 20px 55px;
             position: relative;
         }
-        .hero h2 { color: var(--light-blue); font-size: 1rem; font-weight: 400; }
-        .hero .amount { font-size: 2.5rem; font-weight: 700; margin: 0; }
-        
+        .hero h2 {
+            color: var(--light-blue);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .hero .divider {
+            width: 40px;
+            height: 1px;
+            background: rgba(255,255,255,0.3);
+            margin: 0 auto 20px;
+        }
+        .hero .amount {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1;
+        }
+        .hero .amount .currency {
+            font-size: 1.5rem;
+            font-weight: 400;
+            opacity: 0.75;
+            vertical-align: super;
+            margin-right: 4px;
+        }
         .last-updated {
             position: absolute;
-            bottom: 10px;
+            bottom: 14px;
             right: 16px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            background: rgba(255,255,255,0.15);
             color: var(--light-blue);
-            opacity: 0.9;
-        }
-
-        .method-selector {
-            background: var(--bg-color);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
         }
 
         #defaultSection {
@@ -77,7 +97,7 @@
         }
 
         .interest-hint { font-size: 0.9rem; color: var(--text-main); font-weight: 600; }
-        #hintVal { color: var(--success-green); font-size: 1.1rem; }
+        #hintVal { color: #1db845; font-size: 1.1rem; }
 
         #emiSection {
             display: none;
@@ -90,7 +110,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        
+
         .chart-container { display: flex; flex-direction: column; align-items: center; margin-top: 25px; }
         .doughnut {
             width: 140px; height: 140px; border-radius: 50%;
@@ -106,10 +126,10 @@
         .result-box {
             margin-top: 20px; padding: 15px;
             background-color: #f0fdf4; border-radius: 12px;
-            border: 1px dashed #16a34a; text-align: center;
+            border: 1px dashed #38ff60; text-align: center;
         }
 
-        #emiResult { font-size: 1.4rem; font-weight: 700; color: #16a34a; display: block; }
+        #emiResult { font-size: 1.4rem; font-weight: 700; color: #1db845; display: block; }
         #totalInterestResult { font-size: 1rem; font-weight: 600; color: var(--primary-blue); }
 
         .rate-item { display: flex; justify-content: space-between; padding: 14px 12px; border-bottom: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.3s ease; }
@@ -145,9 +165,10 @@
     <div class="container">
         <div class="card hero">
             <h2 data-key="availTitle">Amount available to lend</h2>
-            <p class="amount" id="availableAmount">Rs. —</p>
+            <div class="divider"></div>
+            <p class="amount" id="availableAmount"><span class="currency">Rs.</span>40,000</p>
             <div class="last-updated">
-                <span data-key="lastUpdatedLbl">Last Updated:</span> 
+                <span data-key="lastUpdatedLbl">Last Updated:</span>
                 <span id="lastUpdatedDate"></span>
             </div>
         </div>
@@ -161,9 +182,10 @@
                 </div>
                 <div class="form-group">
                     <label data-key="labelAmount">Requested Amount (Rs.)</label>
-                    <input type="text" id="requestAmount" required placeholder="e.g. 50,000" inputmode="numeric">
+                    <input type="text" id="requestAmount" required inputmode="numeric">
+                    <span id="amountWarning" style="display:none; font-size:0.8rem; color:#ef4444; margin-top:6px; display:none;"></span>
                 </div>
-                
+
                 <div class="form-group">
                     <label data-key="labelMethod">Repayment Method</label>
                     <select id="methodSelector">
@@ -220,7 +242,10 @@
 
         <div class="card">
             <h2 data-key="ratesTitle">Current Lending Rates (Monthly)</h2>
-            <div id="ratesContainer"></div>
+            <div class="rate-item" data-rate-index="0"><span data-key="rate1">Less than Rs. 100,000</span> <span class="rate">7%</span></div>
+            <div class="rate-item" data-rate-index="1"><span data-key="rate2">Less than Rs. 300,000</span> <span class="rate">6%</span></div>
+            <div class="rate-item" data-rate-index="2"><span data-key="rate3">Less than Rs. 1,000,000</span> <span class="rate">5%</span></div>
+            <div class="rate-item" data-rate-index="3"><span data-key="rate4">More than Rs. 1,000,000</span> <span class="rate">4%</span></div>
         </div>
 
         <div class="card">
@@ -262,15 +287,6 @@
     </div>
 
     <script>
-    <script>
-        // ─── GitHub config ───────────────────────────────────────────────
-        const GITHUB_USER = 'ashodsathsara';
-        const GITHUB_REPO = 'LendingOnboarding';
-        const CONFIG_FILE = 'config.json';
-        const CONFIG_URL  = `./config.json`;
-        const COMMITS_URL = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/commits?path=${CONFIG_FILE}&per_page=1`;
-
-        // ─── Translations ────────────────────────────────────────────────
         const translations = {
             en: {
                 toggle: "සිංහලට මාරු කරන්න",
@@ -291,6 +307,10 @@
                 labelTotalInt: "Total Interest Payable",
                 labelDate: "Expected Date of Disbursement",
                 ratesTitle: "Current Lending Rates (Monthly)",
+                rate1: "Less than Rs. 100,000",
+                rate2: "Less than Rs. 300,000",
+                rate3: "Less than Rs. 1,000,000",
+                rate4: "More than Rs. 1,000,000",
                 btnText: "Send Request via WhatsApp",
                 faqTitle: "Frequently Asked Questions",
                 faqCompQ: "Which repayment method should I choose?",
@@ -304,7 +324,8 @@
                 faqRbA: "Interest is calculated only on the remaining loan amount each month, decreasing over time.",
                 lastUpdatedLbl: "Last Updated:",
                 today: "Today",
-                yesterday: "Yesterday"
+                yesterday: "Yesterday",
+                amountWarning: "This value cannot exceed the available amount."
             },
             si: {
                 toggle: "Switch to English",
@@ -325,6 +346,10 @@
                 labelTotalInt: "මුළු පොලී මුදල",
                 labelDate: "මුදල් අවශ්‍ය දිනය",
                 ratesTitle: "වත්මන් පොලී අනුපාත (මාසික)",
+                rate1: "රු. 100,000 ට අඩු",
+                rate2: "රු. 300,000 ට අඩු",
+                rate3: "රු. 1,000,000 ට අඩු",
+                rate4: "රු. 1,000,000 ට වැඩි",
                 btnText: "WhatsApp මගින් යොමු කරන්න",
                 faqTitle: "පොදු ගැටළු",
                 faqCompQ: "මා තෝරාගත යුත්තේ කුමන ගෙවීමේ ක්‍රමයද?",
@@ -338,65 +363,188 @@
                 faqRbA: "පොලිය ගණනය කරනු ලබන්නේ ඉතිරිව පවතින ණය ශේෂයට පමණි.",
                 lastUpdatedLbl: "අවසන් යාවත්කාලීන කිරීම:",
                 today: "අද",
-                yesterday: "ඊයේ"
+                yesterday: "ඊයේ",
+                amountWarning: "මෙම අගය ලබා දිය හැකි මුදලට වඩා වැඩි විය නොහැකිය."
             }
         };
 
-        // ─── App state ───────────────────────────────────────────────────
         let currentLang = 'en';
-        let CONFIG = null; // populated after fetch
 
-        // ─── Language toggle ─────────────────────────────────────────────
+        // Language toggle
         document.getElementById('langToggle').addEventListener('click', function() {
             currentLang = currentLang === 'en' ? 'si' : 'en';
             this.innerText = translations[currentLang].toggle;
             document.querySelectorAll('[data-key]').forEach(el => {
                 el.innerHTML = translations[currentLang][el.getAttribute('data-key')];
             });
+            const warning = document.getElementById('amountWarning');
+            if (warning.style.display === 'block') {
+                warning.innerText = translations[currentLang].amountWarning;
+            }
         });
 
-        // ─── Last Updated (from GitHub commits API) ──────────────────────
-        async function setLastUpdatedFromGitHub() {
+        // Last Updated
+        function setLastUpdatedText() {
+            const now = new Date();
+            const mod = new Date(document.lastModified);
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const modDate = new Date(mod.getFullYear(), mod.getMonth(), mod.getDate());
+            const diffDays = Math.round((today - modDate) / (1000 * 3600 * 24));
             const dateSpan = document.getElementById('lastUpdatedDate');
-            try {
-                const res = await fetch(COMMITS_URL);
-                const commits = await res.json();
-                const commitDate = new Date(commits[0].commit.committer.date);
-
-                const now = new Date();
-                const today    = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const modDate  = new Date(commitDate.getFullYear(), commitDate.getMonth(), commitDate.getDate());
-                const diffDays = Math.round((today - modDate) / (1000 * 3600 * 24));
-
-                if (diffDays === 0) {
-                    dateSpan.setAttribute('data-key', 'today');
-                    dateSpan.innerHTML = translations[currentLang]['today'];
-                } else if (diffDays === 1) {
-                    dateSpan.setAttribute('data-key', 'yesterday');
-                    dateSpan.innerHTML = translations[currentLang]['yesterday'];
-                } else {
-                    const yyyy = commitDate.getFullYear();
-                    const mm   = String(commitDate.getMonth() + 1).padStart(2, '0');
-                    const dd   = String(commitDate.getDate()).padStart(2, '0');
-                    dateSpan.innerText = `${yyyy}/${mm}/${dd}`;
-                    dateSpan.removeAttribute('data-key');
-                }
-            } catch(e) {
-                dateSpan.innerText = '—';
+            if (diffDays === 0) {
+                dateSpan.setAttribute('data-key', 'today');
+                dateSpan.innerHTML = translations[currentLang]['today'];
+            } else if (diffDays === 1) {
+                dateSpan.setAttribute('data-key', 'yesterday');
+                dateSpan.innerHTML = translations[currentLang]['yesterday'];
+            } else {
+                const yyyy = mod.getFullYear();
+                const mm = String(mod.getMonth() + 1).padStart(2, '0');
+                const dd = String(mod.getDate()).padStart(2, '0');
+                dateSpan.innerText = `${yyyy}/${mm}/${dd}`;
+                dateSpan.removeAttribute('data-key');
             }
         }
+        setLastUpdatedText();
 
-        // ─── Build rates card from config ────────────────────────────────
-        function buildRatesCard(rates) {
-            const container = document.getElementById('ratesContainer');
-            container.innerHTML = '';
-            rates.forEach((r, i) => {
-                const div = document.createElement('div');
-                div.className = 'rate-item';
-                div.setAttribute('data-rate-index', i);
-                div.innerHTML = `<span>${r.label}</span><span class="rate">${Math.round(r.rate * 100)}%</span>`;
-                container.appendChild(div);
+        // FAQ toggle
+        document.querySelectorAll('.faq-item h3').forEach(faqHeader => {
+            faqHeader.addEventListener('click', () => {
+                faqHeader.parentElement.classList.toggle('active');
+            });
+        });
+
+        // Method selector
+        const methodSelector = document.getElementById('methodSelector');
+        const defaultSection = document.getElementById('defaultSection');
+        const emiSection = document.getElementById('emiSection');
+
+        methodSelector.addEventListener('change', function() {
+            emiSection.style.display = this.value === 'emi' ? 'block' : 'none';
+            defaultSection.style.display = this.value === 'emi' ? 'none' : 'block';
+            updateUI();
+        });
+
+        const amountInp = document.getElementById('requestAmount');
+        const yearInp = document.getElementById('durYears');
+        const monthInp = document.getElementById('durMonths');
+
+        // Rate highlight
+        function highlightRate(amount) {
+            const rateItems = document.querySelectorAll('.rate-item');
+            let activeIndex = -1;
+            if (amount > 0) {
+                if (amount < 100000)       activeIndex = 0;
+                else if (amount < 300000)  activeIndex = 1;
+                else if (amount < 1000000) activeIndex = 2;
+                else                       activeIndex = 3;
+            }
+            rateItems.forEach(item => {
+                const idx = parseInt(item.getAttribute('data-rate-index'));
+                item.classList.toggle('active-rate',   idx === activeIndex);
+                item.classList.toggle('inactive-rate', activeIndex !== -1 && idx !== activeIndex);
             });
         }
 
-        // ─── Rate highlight ──────────────────────
+        // Get rate for amount
+        function getMonthlyRate(amount) {
+            if (amount < 100000)  return 0.07;
+            if (amount < 300000)  return 0.06;
+            if (amount < 1000000) return 0.05;
+            return 0.04;
+        }
+
+        // Main UI update
+        function updateUI() {
+            const amount = parseFloat(amountInp.value.replace(/,/g, '')) || 0;
+            const rate = getMonthlyRate(amount);
+            const method = methodSelector.value;
+            highlightRate(amount);
+
+            if (method === 'default') {
+                const monthlyInterest = amount * rate;
+                document.getElementById('hintVal').innerText = monthlyInterest.toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else {
+                const years = parseInt(yearInp.value) || 0;
+                const months = parseInt(monthInp.value) || 0;
+                const totalMonths = (years * 12) + months;
+
+                if (amount > 0 && totalMonths > 0) {
+                    const r = rate;
+                    const n = totalMonths;
+                    const emi = (amount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+                    const totalPayable = emi * n;
+                    const totalInterest = totalPayable - amount;
+
+                    document.getElementById('emiResult').innerText = 'Rs. ' + emi.toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('totalInterestResult').innerText = 'Rs. ' + totalInterest.toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                    const capitalDeg = (amount / totalPayable) * 360;
+                    document.getElementById('chart').style.background =
+                        `conic-gradient(#38ff60 0deg ${capitalDeg}deg, #2563eb ${capitalDeg}deg 360deg)`;
+                } else {
+                    document.getElementById('emiResult').innerText = 'Rs. 0.00';
+                    document.getElementById('totalInterestResult').innerText = 'Rs. 0.00';
+                    document.getElementById('chart').style.background = 'conic-gradient(#ccc 0deg 360deg)';
+                }
+            }
+        }
+
+        // Amount input with comma formatting and max validation
+        amountInp.addEventListener('input', function() {
+            const raw = this.value.replace(/,/g, '');
+            if (!/^\d*$/.test(raw)) { this.value = this.value.slice(0, -1); return; }
+            this.value = raw ? parseInt(raw).toLocaleString('en-LK') : '';
+
+            const entered = parseInt(raw) || 0;
+            const warning = document.getElementById('amountWarning');
+            if (entered > availableAmountRaw) {
+                warning.innerText = translations[currentLang].amountWarning;
+                warning.style.display = 'block';
+                this.style.borderColor = '#ef4444';
+            } else {
+                warning.style.display = 'none';
+                this.style.borderColor = '';
+            }
+            updateUI();
+        });
+        yearInp.addEventListener('input', updateUI);
+        monthInp.addEventListener('input', updateUI);
+
+        // WhatsApp submission
+        document.getElementById('requestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const amount = document.getElementById('requestAmount').value.trim();
+            const method = methodSelector.value;
+            const date = document.getElementById('date').value;
+            const years = yearInp.value;
+            const months = monthInp.value;
+
+            let message = `*New LendingRequest*\n\n`;
+            message += `*Name:* ${name}\n`;
+            message += `*Amount:* Rs. ${parseFloat(amount.replace(/,/g, '')).toLocaleString('en-LK')}\n`;
+            message += `*Repayment Method:* ${method === 'emi' ? 'EMI' : 'Default (Monthly Interest Only)'}\n`;
+            if (method === 'emi') {
+                message += `*Duration:* ${years} year(s) ${months} month(s)\n`;
+                message += `*Monthly Installment:* ${document.getElementById('emiResult').innerText}\n`;
+                message += `*Total Interest:* ${document.getElementById('totalInterestResult').innerText}\n`;
+            } else {
+                message += `*Monthly Interest:* Rs. ${document.getElementById('hintVal').innerText}\n`;
+            }
+            message += `*Expected Date:* ${date}`;
+
+            window.open(`https://wa.me/94714296288?text=${encodeURIComponent(message)}`, '_blank');
+        });
+
+        // Set placeholder to half of available amount
+        const availableAmountEl = document.getElementById('availableAmount');
+        const availableAmountRaw = parseInt(availableAmountEl.innerText.replace(/[^0-9]/g, ''));
+        const halfAmount = (Math.round((availableAmountRaw / 2) / 500) * 500).toLocaleString('en-LK');
+        document.getElementById('requestAmount').placeholder = `e.g. ${halfAmount}`;
+
+        // Initial render
+        updateUI();
+    </script>
+</body>
+</html>
