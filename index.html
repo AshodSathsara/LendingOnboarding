@@ -267,7 +267,7 @@
         const GITHUB_USER = 'ashodsathsara';
         const GITHUB_REPO = 'LendingOnboarding';
         const CONFIG_FILE = 'config.json';
-        const CONFIG_URL  = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${CONFIG_FILE}`;
+        const CONFIG_URL  = `./config.json`;
         const COMMITS_URL = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/commits?path=${CONFIG_FILE}&per_page=1`;
 
         // ─── Translations ────────────────────────────────────────────────
@@ -396,4 +396,7 @@
                 div.setAttribute('data-rate-index', i);
                 div.innerHTML = `<span>${r.label}</span><span class="rate">${Math.round(r.rate * 100)}%</span>`;
                 container.appendChild(div);
-         
+            });
+        }
+
+        // ─── Rate highlight ──────────────────────
